@@ -3,10 +3,12 @@ package com.example.PatilDhaba.Controller;
 import com.example.PatilDhaba.model.OrderItem;
 import com.example.PatilDhaba.model.Table;
 import com.example.PatilDhaba.service.TableService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/tables")
 public class TableController {
@@ -18,8 +20,10 @@ public class TableController {
     public ResponseEntity<Table> createTable(@RequestParam int tableNumber) {
         try {
             Table table = tableService.createTable(tableNumber);
+            log.info("Table created successfully");
             return ResponseEntity.ok(table);
         } catch (IllegalArgumentException ex) {
+            log.warn("Error creating table: {}", ex.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }
@@ -27,6 +31,7 @@ public class TableController {
     @PostMapping("/orderItem/add/{tableNumber}")
     public ResponseEntity<Table> addOrderItem(@PathVariable int tableNumber, @RequestBody OrderItem orderItem) {
         Table table = tableService.addOrderItem(tableNumber, orderItem);
+        log.info("Order item added successfully");
         return ResponseEntity.ok(table);
     }
 
@@ -46,8 +51,10 @@ public class TableController {
     public ResponseEntity<Table> getTable(@PathVariable int tableNumber) {
         Table table = tableService.getTable(tableNumber);
         if (table != null) {
+            log.info("Table fetched successfully");
             return ResponseEntity.ok(table);
         } else {
+            log.warn("Table not found");
             return ResponseEntity.notFound().build();
         }
     }
