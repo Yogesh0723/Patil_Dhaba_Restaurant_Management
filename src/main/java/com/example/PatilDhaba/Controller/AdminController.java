@@ -60,4 +60,16 @@ public class AdminController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+    @PutMapping("/update/{username}")
+    public ResponseEntity<String> updateAdmin(@PathVariable String username, @RequestBody Admin admin, @RequestParam String currentPassword) {
+        try {
+            adminService.updateAdmin(username, currentPassword, admin);
+            log.info("Admin details updated successfully");
+            return ResponseEntity.ok("Admin details updated successfully");
+        } catch (IllegalArgumentException e) {
+            log.warn("Error updating admin details: {}", e.getMessage());
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
 }

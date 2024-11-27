@@ -16,6 +16,7 @@ public class Table {
     private List<OrderItem> orderItems = new ArrayList<>();
     private double totalAmount;
     private double discount;
+    private int kotNumber;
 
     public double getFinalAmount() {
         return totalAmount - discount;

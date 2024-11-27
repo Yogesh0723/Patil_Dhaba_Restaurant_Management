@@ -20,7 +20,7 @@ public class TableController {
     public ResponseEntity<Table> createTable(@RequestParam int tableNumber) {
         try {
             Table table = tableService.createTable(tableNumber);
-            log.info("Table created successfully");
+            log.info("Table created or already exists: {}", tableNumber);
             return ResponseEntity.ok(table);
         } catch (IllegalArgumentException ex) {
             log.warn("Error creating table: {}", ex.getMessage());
@@ -63,5 +63,18 @@ public class TableController {
     public ResponseEntity<Double> getTodayProfit() {
         double profit = tableService.getTodayProfit();
         return ResponseEntity.ok(profit);
+    }
+
+    // Updated endpoint to settle the bill without modifying KOT number
+    @PostMapping("/settle/{tableNumber}")
+    public ResponseEntity<Void> settleBill(@PathVariable int tableNumber) {
+        try {
+            tableService.settleBill(tableNumber);
+            log.info("Bill settled successfully for table {}", tableNumber);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException ex) {
+            log.warn("Error settling bill: {}", ex.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

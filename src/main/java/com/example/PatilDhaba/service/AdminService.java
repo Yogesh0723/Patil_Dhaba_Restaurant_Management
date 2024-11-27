@@ -68,4 +68,41 @@ public class AdminService {
         }
         adminRepository.delete(existingAdmin.get());
     }
+    public Admin updateAdmin(String username, String currentPassword, Admin updatedAdmin) throws IllegalArgumentException {
+        Optional<Admin> existingAdminOpt = Optional.ofNullable(adminRepository.findByUsername(username));
+        if (!existingAdminOpt.isPresent()) {
+            throw new IllegalArgumentException("Admin not found");
+        }
+
+        Admin existingAdmin = existingAdminOpt.get();
+
+        // Validate the current password
+        if (!passwordEncoder.matches(currentPassword, existingAdmin.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        // Check if the new username is different and already taken by another admin
+        if (!existingAdmin.getUsername().equals(updatedAdmin.getUsername()) && adminRepository.findByUsername(updatedAdmin.getUsername()) != null) {
+            throw new IllegalArgumentException("Username is already taken");
+        }
+
+        // Check if the new email is different and already taken by another admin
+        if (!existingAdmin.getEmail().equals(updatedAdmin.getEmail()) && adminRepository.findByEmail(updatedAdmin.getEmail()) != null) {
+            throw new IllegalArgumentException("Email is already registered");
+        }
+
+        // Update all fields
+        existingAdmin.setUsername(updatedAdmin.getUsername());
+        existingAdmin.setEmail(updatedAdmin.getEmail());
+        existingAdmin.setFirstName(updatedAdmin.getFirstName());
+        existingAdmin.setLastName(updatedAdmin.getLastName());
+        existingAdmin.setPhoneNumber(updatedAdmin.getPhoneNumber());
+
+        // Update password only if a new one is provided
+        if (updatedAdmin.getPassword() != null && !updatedAdmin.getPassword().isEmpty()) {
+            existingAdmin.setPassword(passwordEncoder.encode(updatedAdmin.getPassword()));
+        }
+
+        return adminRepository.save(existingAdmin);
+    }
 }

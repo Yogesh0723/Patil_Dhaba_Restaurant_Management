@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MenuItem {
     @Id
     private String id;
-    private String name;
-    private double price;
-    private String description;
+        private String name;
+        private double price;
+        private String description;
 }
