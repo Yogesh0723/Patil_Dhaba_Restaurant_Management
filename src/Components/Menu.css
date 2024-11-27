@@ -1,0 +1,29 @@
+/* Menu Styles */
+.menu {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  background-color: #222;
+  color: #fff;
+  border-bottom: 1px solid #333;
+}
+
+.menu .profile {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.menu .profile img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.menu .menu-icon {
+  cursor: pointer;
+}
+
+.menu .menu-icon i {
+  font-size: 20px;
+}

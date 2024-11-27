@@ -1,0 +1,35 @@
+/* client/src/Components/Dashboard.css */
+/*body {
+    background: linear-gradient(to bottom, #000000, #6c6c6c);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}*/
+
+.dashboard-container {
+    padding: 20px; /* Add some padding */
+}
+
+.navbar-custom {
+    background-color: #808080; /* Navbar color */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 0.5rem 1rem; /* Adjust padding for a better look */
+}
+
+.navbar-custom .navbar-brand {
+    color: #fff; /* Navbar brand color */
+}
+
+.navbar-custom .nav-link {
+    color: #fff; /* Navbar link color */
+}
+
+.navbar-custom .dropdown-item {
+    color: #000; /* Dropdown item color */
+}
+
+/* Optional: Add hover effects for better UX */
+.navbar-custom .nav-link:hover,
+.navbar-custom .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
+}

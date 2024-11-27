@@ -1,13 +1,201 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Montserrat', sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.header {
+  background: #2c2c2c;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.header .logo img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.header .nav {
+  display: flex;
+  gap: 20px;
+}
+
+.header .nav a {
+  color: #f5f5f5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header .nav a:hover {
+  color: #ffcc00;
+}
+
+.main {
+  background: linear-gradient(135deg, #2c2c2c 50%, #ffffff 50%);
+  color: #ffffff;
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.main .content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.main .content h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.main .content p {
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.main .content .btn {
+  background: #00bfa5;
+  color: #ffffff;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.main .content .btn:hover {
+  background: #009688;
+}
+
+.main .image {
+  margin-top: 40px;
+}
+
+.main .image img {
+  max-width: 100%;
+}
+
+.explore {
+  background: #ffffff;
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.explore .content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.explore .content h2 {
+  font-size: 28px;
+  color: #00bfa5;
+  margin-bottom: 20px;
+}
+
+.explore .content p {
+  font-size: 16px;
+  color: #666666;
+  margin-bottom: 40px;
+}
+
+.explore .content .btn {
+  color: #00bfa5;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.explore .content .btn:hover {
+  text-decoration: underline;
+}
+
+.explore .image {
+  margin-top: 40px;
+}
+
+.explore .image img {
+  max-width: 100%;
+}
+.nav-link {
+  color: #f5f5f5;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 20px;
+}
+
+.nav-link:hover {
+  color: #ffcc00;
+}
+
+.home {
+  text-align: center;
+  margin-top: 50px;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 50%;
+  max-width: 500px;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ffcc00;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  background-color: #ff9900;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+.modal-content form button {
+  background-color: #ffcc00;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.modal-content form button:hover {
+  background-color: #ff9900;
 }
