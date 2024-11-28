@@ -37,18 +37,6 @@ public class AdminController {
         return ResponseEntity.status(401).body("Invalid credentials");
     }
 
-    @PutMapping("/update/{username}")
-    public ResponseEntity<String> updateAdmin(@PathVariable String username, @RequestBody Admin admin) {
-        try {
-            adminService.updateAdmin(username, admin);
-            log.info("Admin details updated successfully");
-            return ResponseEntity.ok("Admin details updated successfully");
-        } catch (IllegalArgumentException e) {
-            log.warn("Error updating admin details: {}", e.getMessage());
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
     @DeleteMapping("/delete/{username}")
     public ResponseEntity<String> deleteAdmin(@PathVariable String username) {
         try {
