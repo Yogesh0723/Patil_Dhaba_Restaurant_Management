@@ -11,7 +11,7 @@
 }
 
 .navbar-custom {
-    background-color: #808080; /* Navbar color */
+    background-color: #010101; /* Navbar color */
     border-radius: 0.5rem; /* Rounded corners */
     padding: 0.5rem 1rem; /* Adjust padding for a better look */
 }
@@ -32,4 +32,26 @@
 .navbar-custom .nav-link:hover,
 .navbar-custom .dropdown-item:hover {
     background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Default color */
+    transition: color 0.3s; /* Smooth transition */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffcc00; /* Change color on hover */
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8); /* Glow effect */
+}
+
+.navbar-dark .navbar-brand:hover {
+    color: #ffcc00; /* Change color on hover */
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8); /* Glow effect */
+}
+.table-item {
+    border: 1px solid #ccc; /* Border for table items */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.table-item:hover {
+    background-color: #f0f0f0; /* Change background color on hover */
 }

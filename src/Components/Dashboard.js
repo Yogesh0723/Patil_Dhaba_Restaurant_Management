@@ -1,11 +1,12 @@
-// client/src/Components/Dashboard.js
+/** @jsxImportSource theme-ui */
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Button, Form, Table, Badge, Card, ListGroup, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import './Dashboard.css';
-import { useNavigate } from 'react-router-dom'; // Import the CSS file for custom styles
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesome
+import { faUserCircle, faSun, faMoon } from '@fortawesome/free-solid-svg-icons'; // Import user icon and theme icons
 
 const Dashboard = () => {
     const initialTables = [];
@@ -20,6 +21,7 @@ const Dashboard = () => {
     const [quantity, setQuantity] = useState(1);
     const [discount, setDiscount] = useState(0);
     const [newTableNumber, setNewTableNumber] = useState('');
+    const [isDarkMode, setIsDarkMode] = useState(false); // State for dark mode
     const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
@@ -202,6 +204,10 @@ const Dashboard = () => {
         }
     };
 
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -211,20 +217,25 @@ const Dashboard = () => {
     }
 
     return (
-        <>
-            <Navbar className="navbar-custom" expand="lg"> {/* Added class for navbar */}
-                <Navbar.Brand href="#home">Restaurant Dashboard</Navbar.Brand>
+        <div style={{ backgroundColor: isDarkMode ? '#121212' : '#ffffff', minHeight: '100vh' }}> {/* Background color based on theme */}
+            <Navbar style={{ backgroundColor: isDarkMode ? '#ffffff' : '#343a40' }} expand="lg" className="navbar-dark"> {/* Navbar color based on theme */}
+                <Navbar.Brand href="#home" style={{ color: isDarkMode ? '#000' : '#fff' }}>Restaurant Dashboard</Navbar.Brand>
                 <Nav className="ms-auto">
-                    <NavDropdown title="Configure" id="basic-nav-dropdown" align={'end'}>
+                    <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} style={{ color: isDarkMode ? '#000' : '#fff', fontSize: '1.5rem' }} />} id="basic-nav-dropdown" align={'end'}>
                         <NavDropdown.Item onClick={() => navigate('/update-profile')}>Update Profile</NavDropdown.Item> {/* Navigate to Update Profile */}
                         <NavDropdown.Item onClick={() => navigate('/menu')}>Update Menu</NavDropdown.Item> {/* Navigate to Menu */}
                         <NavDropdown.Item onClick={() => { window.location.href = 'http://localhost:3000'; }}>Logout</NavDropdown.Item> {/* Redirect to homepage */}
                     </NavDropdown>
+                    <Nav.Link href="#settings" style={{ color: isDarkMode ? '#000' : '#fff' }}>Settings</Nav.Link> {/* Additional Nav Item */}
+                    <Nav.Link href="#help" style={{ color: isDarkMode ? '#000' : '#fff' }}>Help</Nav.Link> {/* Additional Nav Item */}
+                    <Button onClick={toggleTheme} variant={isDarkMode ? "outline-dark" : "outline-light"} style={{ marginLeft: '10px' }}>
+                        <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+                    </Button> {/* Toggle button for light/dark mode */}
                 </Nav>
             </Navbar>
-            <Container className="dashboard-container"> {/* Added class for overall background */}
+            <Container>
                 <Row>
-                    <Col md={4} className="mb-4"> {/* Increased the size of the table column */}
+                    <Col md={4} className="mb-4" style={{ paddingTop: '20px' }}> {/* Increased the size of the table column */}
                         <Card>
                             <Card.Body>
                                 <h2>Tables</h2>
@@ -242,7 +253,7 @@ const Dashboard = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={8}> {/* Increased the size of the right column */}
+                    <Col md={8} style={{ paddingTop: '20px' }}> {/* Increased the size of the right column */}
                         <Card className="mb-4"> {/* Removed gradient background */}
                             <Card.Body>
                                 <h2>Manage Table</h2>
@@ -275,7 +286,7 @@ const Dashboard = () => {
                                                                 onClick={() => handleMenuItemSelect(item)}
                                                                 style={{ cursor: 'pointer' }}
                                                             >
-                                                                {item.name} - ${item.price}
+                                                                {item.name} - {item.price}
                                                             </ListGroup.Item>
                                                         ))}
                                                     </ListGroup>
@@ -361,7 +372,7 @@ const Dashboard = () => {
                     </Col>
                 </Row>
             </Container>
-        </>
+        </div>
     );
 };
 
