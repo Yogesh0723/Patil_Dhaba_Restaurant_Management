@@ -8,6 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service class for managing admin operations.
+ * <p>
+ * This class provides methods for registering, logging in, updating, and deleting admins,
+ * as well as validating credentials and handling password encryption.
+ * </p>
+ */
 @Service
 public class AdminService {
     @Autowired
@@ -15,6 +22,13 @@ public class AdminService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    /**
+     * Registers a new admin.
+     *
+     * @param admin the admin details to register
+     * @return the registered admin
+     * @throws IllegalArgumentException if the username or email is already taken
+     */
     public Admin registerAdmin(Admin admin) throws IllegalArgumentException {
         if (adminRepository.findByUsername(admin.getUsername()) != null) {
             throw new IllegalArgumentException("Username is already taken");
@@ -26,6 +40,13 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
+    /**
+     * Logs in an admin with the provided credentials.
+     *
+     * @param username the admin's username
+     * @param password the admin's password
+     * @return the logged-in admin if credentials are valid, or null if invalid
+     */
     public Admin loginAdmin(String username, String password) {
         Admin admin = adminRepository.findByUsername(username);
         if (admin != null && passwordEncoder.matches(password, admin.getPassword())) {
@@ -34,6 +55,14 @@ public class AdminService {
         return null;
     }
 
+    /**
+     * Updates an existing admin's details.
+     *
+     * @param username     the username of the admin to update
+     * @param updatedAdmin the new admin details
+     * @return the updated admin
+     * @throws IllegalArgumentException if the admin is not found or if the new username/email is already taken
+     */
     public Admin updateAdmin(String username, Admin updatedAdmin) throws IllegalArgumentException {
         Optional<Admin> existingAdminOpt = Optional.ofNullable(adminRepository.findByUsername(username));
         if (!existingAdminOpt.isPresent()) {
@@ -61,6 +90,12 @@ public class AdminService {
         return adminRepository.save(existingAdmin);
     }
 
+    /**
+     * Deletes an admin by their username.
+     *
+     * @param username the username of the admin to delete
+     * @throws IllegalArgumentException if the admin is not found
+     */
     public void deleteAdmin(String username) throws IllegalArgumentException {
         Optional<Admin> existingAdmin = Optional.ofNullable(adminRepository.findByUsername(username));
         if (!existingAdmin.isPresent()) {
@@ -68,6 +103,16 @@ public class AdminService {
         }
         adminRepository.delete(existingAdmin.get());
     }
+
+    /**
+     * Updates an existing admin's details with current password validation.
+     *
+     * @param username        the username of the admin to update
+     * @param currentPassword the current password for validation
+     * @param updatedAdmin    the new admin details
+     * @return the updated admin
+     * @throws IllegalArgumentException if the admin is not found or if the current password is incorrect
+     */
     public Admin updateAdmin(String username, String currentPassword, Admin updatedAdmin) throws IllegalArgumentException {
         Optional<Admin> existingAdminOpt = Optional.ofNullable(adminRepository.findByUsername(username));
         if (!existingAdminOpt.isPresent()) {
