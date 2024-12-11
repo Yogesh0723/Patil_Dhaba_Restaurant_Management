@@ -79,46 +79,50 @@ public class EmployeeController {
     }
 
     /**
-     * Calculates the monthly salary for an employee.
+     * Calculates the monthly salary for an employee for a specific month.
      *
-     * @param id the ID of the employee
+     * @param id    the ID of the employee
+     * @param month the month for which to calculate the salary (1-12)
      * @return the calculated monthly salary
      */
-    @GetMapping("/{id}/salary")
-    public double calculateMonthlySalary(@PathVariable String id) {
-        double salary = employeeService.calculateMonthlySalary(id);
-        System.out.println("Calculated salary for employee ID " + id + ": " + salary);
+    @GetMapping("/{id}/salary/{month}")
+    public double calculateMonthlySalary(@PathVariable String id, @PathVariable int month) {
+        double salary = employeeService.calculateMonthlySalary(id, month);
+        System.out.println("Calculated salary for employee ID " + id + " for month " + month + ": " + salary);
         return salary;
     }
 
     /**
-     * Retrieves the attendance records for an employee.
+     * Retrieves the attendance records for an employee for a specific month.
      *
-     * @param id the ID of the employee
+     * @param id    the ID of the employee
+     * @param month the month for which to retrieve attendance records (1-12)
      * @return a response entity containing the attendance records if found, or a not found response
      */
-    @GetMapping("/{id}/attendance")
-    public ResponseEntity<List<Double>> getEmployeeAttendance(@PathVariable String id) {
+        @GetMapping("/{id}/attendance/{month}")
+    public ResponseEntity<List<Double>> getEmployeeAttendance(@PathVariable String id, @PathVariable int month) {
         return employeeService.getEmployeeById(id)
-                .map(employee -> ResponseEntity.ok(employee.getAttendance()))
+                .map(employee -> ResponseEntity.ok(employee.getAttendance().get(month)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * Updates the attendance for an employee on a specific day.
+     * Updates the attendance for an employee on a specific day of a specific month.
      *
      * @param id     the ID of the employee
+     * @param month  the month (1-12) to update attendance
      * @param day    the day of the month (1-31) to update attendance
      * @param hours  the number of hours worked on that day
      * @return a response entity indicating the result of the update
      */
-    @PutMapping("/{id}/attendance/{day}")
+    @PutMapping("/{id}/attendance/{month}/{day}")
     public ResponseEntity<Void> updateAttendance(
             @PathVariable String id,
+            @PathVariable int month,
             @PathVariable int day,
             @RequestParam double hours
     ) {
-        employeeService.updateAttendance(id, day, hours);
+        employeeService.updateAttendance(id, month, day, hours);
         return ResponseEntity.ok().build();
     }
 

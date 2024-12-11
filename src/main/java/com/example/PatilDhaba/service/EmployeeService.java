@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,11 @@ public class EmployeeService {
     public Employee createEmployee(Employee employee) {
         // Ensure attendance is initialized
         if (employee.getAttendance() == null || employee.getAttendance().isEmpty()) {
-            employee.setAttendance(new ArrayList<>(Collections.nCopies(31, 0.0)));
+            employee.setAttendance(new HashMap<>());
+            for (int month = 1; month <= 12; month++) {
+                int daysInMonth = java.time.Month.of(month).length(false); // Non-leap year
+                employee.getAttendance().put(month, new ArrayList<>(Collections.nCopies(daysInMonth, 0.0)));
+            }
         }
         return employeeRepository.save(employee);
     }
@@ -67,7 +72,11 @@ public class EmployeeService {
         employee.setId(id);
         // Ensure attendance is initialized
         if (employee.getAttendance() == null || employee.getAttendance().isEmpty()) {
-            employee.setAttendance(new ArrayList<>(Collections.nCopies(31, 0.0)));
+            employee.setAttendance(new HashMap<>());
+            for (int month = 1; month <= 12; month++) {
+                int daysInMonth = java.time.Month.of(month).length(false); // Non-leap year
+                employee.getAttendance().put(month, new ArrayList<>(Collections.nCopies(daysInMonth, 0.0)));
+            }
         }
         return employeeRepository.save(employee);
     }
@@ -84,55 +93,59 @@ public class EmployeeService {
     /**
      * Calculates the monthly salary for an employee.
      *
-     * @param id the ID of the employee
+     * @param id    the ID of the employee
+     * @param month the month for which to calculate the salary
      * @return the calculated monthly salary
      */
-    public double calculateMonthlySalary(String id) {
+    public double calculateMonthlySalary(String id, int month) {
         Optional<Employee> employeeOpt = employeeRepository.findById(id);
         if (employeeOpt.isPresent()) {
             Employee employee = employeeOpt.get();
 
             // Initialize attendance if null
-            if (employee.getAttendance() == null) {
-                employee.setAttendance(new ArrayList<>(Collections.nCopies(31, 0.0)));
+            if (employee.getAttendance() == null || !employee.getAttendance().containsKey(month)) {
+                employee.setAttendance(new HashMap<>());
+                int daysInMonth = java.time.Month.of(month).length(false); // Non-leap year
+                employee.getAttendance().put(month, new ArrayList<>(Collections.nCopies(daysInMonth, 0.0)));
             }
 
             double salary = 0;
-            for (double hours : employee.getAttendance()) {
+            for (double hours : employee.getAttendance().get(month)) {
                 if (hours >= 9) {
                     salary += employee.getSalaryPerDay(); // Full day salary
                 } else if (hours > 0) {
                     salary += (employee.getSalaryPerDay() / 9) * hours; // Proportional salary
                 }
             }
-            employee.setSalaryPerMonth(salary);
+            employee.setSalaryPerMonth(Math.round(salary));
             employeeRepository.save(employee);
-
-            System.out.println("Calculated salary for employee ID " + id + ": " + salary);
-            return salary;
+            return Math.round(salary);
         }
         throw new IllegalArgumentException("Employee not found with id: " + id);
     }
 
     /**
-     * Updates the attendance for an employee on a specific day.
+     * Updates the attendance for an employee on a specific day of a specific month.
      *
      * @param id     the ID of the employee
+     * @param month  the month (1-12) to update attendance
      * @param day    the day of the month (1-31) to update attendance
      * @param hours  the number of hours worked on that day
      */
-    public void updateAttendance(String id, int day, Number hours) {
+    public void updateAttendance(String id, int month, int day, Number hours) {
         Optional<Employee> employeeOpt = employeeRepository.findById(id);
         if (employeeOpt.isPresent()) {
             Employee employee = employeeOpt.get();
-            if (employee.getAttendance() == null || employee.getAttendance().size() < 31) {
-                employee.setAttendance(new ArrayList<>(Collections.nCopies(31, 0.0)));
+            if (employee.getAttendance() == null) {
+                employee.setAttendance(new HashMap<>());
             }
+            employee.getAttendance().putIfAbsent(month, new ArrayList<>(Collections.nCopies(31, 0.0)));
+
             if (day < 1 || day > 31) {
                 throw new IllegalArgumentException("Day must be between 1 and 31");
             }
 
-            employee.getAttendance().set(day - 1, hours.doubleValue());
+            employee.getAttendance().get(month).set(day - 1, hours.doubleValue());
             employeeRepository.save(employee);
         } else {
             throw new IllegalArgumentException("Employee not found with id: " + id);
