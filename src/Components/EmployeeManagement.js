@@ -32,21 +32,33 @@ const EmployeeManagement = () => {
     const [attendanceData, setAttendanceData] = useState([]);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showAddEmployee, setShowAddEmployee] = useState(false); // State to toggle Add Employee form
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchEmployees();
     }, []);
 
+    useEffect(() => {
+        // Fetch salary for all employees whenever the selected month changes
+        const fetchSalaries = async () => {
+            for (const employee of employees) {
+                const salary = await fetchSalary(employee.id, selectedMonth);
+                employee.salaryPerMonth = salary;
+            }
+            setEmployees([...employees]); // Update state to trigger re-render
+        };
+
+        if (employees.length > 0) {
+            fetchSalaries();
+        }
+    }, [selectedMonth, employees]);
+
     const fetchEmployees = async () => {
         try {
             const response = await axios.get(`http://localhost:8081/employees`);
             if (response.status === 200) {
                 const employeesData = response.data;
-                for (const employee of employeesData) {
-                    const salary = await fetchSalary(employee.id);
-                    employee.salaryPerMonth = salary;
-                }
                 setEmployees(employeesData);
             } else {
                 throw new Error("Failed to fetch employees");
@@ -57,9 +69,9 @@ const EmployeeManagement = () => {
         }
     };
 
-    const fetchSalary = async (id) => {
+    const fetchSalary = async (id, month) => {
         try {
-            const response = await axios.get(`http://localhost:8081/employees/${id}/salary`);
+            const response = await axios.get(`http://localhost:8081/employees/${id}/salary/${month}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching salary:", error);
@@ -142,8 +154,9 @@ const EmployeeManagement = () => {
     };
 
     const fetchAttendance = async (id) => {
+        const month = selectedDate.getMonth() + 1; // Get the current month (1-12)
         try {
-            const response = await axios.get(`http://localhost:8081/employees/${id}/attendance`);
+            const response = await axios.get(`http://localhost:8081/employees/${id}/attendance/${month}`);
             setAttendanceData(response.data);
         } catch (error) {
             console.error("Error fetching attendance:", error);
@@ -153,9 +166,11 @@ const EmployeeManagement = () => {
 
     const handleAttendanceSubmit = async () => {
         const day = selectedDate.getDate();
+        const month = selectedDate.getMonth() + 1; // Get the current month (1-12)
         try {
-            await axios.put(`http://localhost:8081/employees/${attendanceEmployeeId}/attendance/${day}?hours=${attendanceHours}`);
-            fetchEmployees();
+            await axios.put(`http://localhost:8081/employees/${attendanceEmployeeId}/attendance/${month}/${day}?hours=${attendanceHours}`);
+            await fetchAttendance(attendanceEmployeeId); // Fetch updated attendance after submission
+            fetchEmployees(); // Refresh employee list to update salary
             handleCloseCalendar();
             toast.success('Attendance updated successfully!');
         } catch (error) {
@@ -196,6 +211,12 @@ const EmployeeManagement = () => {
         setIsDarkMode(!isDarkMode);
     };
 
+    // Month options for the dropdown
+    const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+        value: i + 1,
+        label: new Date(0, i).toLocaleString('default', { month: 'long' }),
+    }));
+
     return (
         <div style={{ backgroundColor: isDarkMode ? '#343a40' : '#f8f9fa', minHeight: '100vh', color: isDarkMode ? '#ffffff' : '#000000' }}>
             <Navbar style={{ backgroundColor: isDarkMode ? '#495057' : '#ffffff' }} expand="lg" className="navbar-light">
@@ -214,12 +235,12 @@ const EmployeeManagement = () => {
             <Container>
                 <Row>
                     <Col md={4} className="mb-4" style={{ paddingTop: '2px' }}>
-                        <Button 
-                            variant="success" 
-                            onClick={() => setShowAddEmployee(!showAddEmployee)} 
+                        <Button
+                            variant="success"
+                            onClick={() => setShowAddEmployee(!showAddEmployee)}
                             style={{ marginBottom: '10px', borderRadius: '50%', width: '40px', height: '40px', display: 'left', alignItems: 'center', justifyContent: 'left' }}
                         >
-                            <FontAwesomeIcon icon={faPlus} /> 
+                            <FontAwesomeIcon icon={faPlus} />
                         </Button>
                         {showAddEmployee && (
                             <Card>
@@ -282,6 +303,14 @@ const EmployeeManagement = () => {
                                             <FontAwesomeIcon icon={faSearch} />
                                         </Button>
                                     </div>
+                                </Form.Group>
+                                <Form.Group controlId="salaryMonth" style={{ marginBottom: '10px' }}>
+                                    <Form.Label>Select Month for Salary</Form.Label>
+                                    <Form.Control as="select" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                                        {monthOptions.map(month => (
+                                            <option key={month.value} value={month.value}>{month.label}</option>
+                                        ))}
+                                    </Form.Control>
                                 </Form.Group>
                                 <Table striped bordered hover className="mt-3">
                                     <thead>

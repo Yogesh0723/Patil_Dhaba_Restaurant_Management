@@ -224,6 +224,7 @@ const Dashboard = () => {
                     <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} style={{ color: isDarkMode ? '#000' : '#fff', fontSize: '1.5rem' }} />} id="basic-nav-dropdown" align={'end'}>
                         <NavDropdown.Item onClick={() => navigate('/update-profile')}>Update Profile</NavDropdown.Item> {/* Navigate to Update Profile */}
                         <NavDropdown.Item onClick={() => navigate('/menu')}>Update Menu</NavDropdown.Item> {/* Navigate to Menu */}
+                        <NavDropdown.Item onClick={() => navigate('/employees')}>Employee Dashboard</NavDropdown.Item> {/* Navigate to Employee Dashboard */}
                         <NavDropdown.Item onClick={() => { window.location.href = 'http://localhost:3000'; }}>Logout</NavDropdown.Item> {/* Redirect to homepage */}
                     </NavDropdown>
                     <Nav.Link href="#settings" style={{ color: isDarkMode ? '#000' : '#fff' }}>Settings</Nav.Link> {/* Additional Nav Item */}
