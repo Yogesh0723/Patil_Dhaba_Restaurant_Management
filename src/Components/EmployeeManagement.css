@@ -1,0 +1,63 @@
+/* EmployeeManagement.css */
+.attendance-day {
+    width: 40px; /* Adjust width for circles */
+    height: 40px; /* Adjust height for circles */
+    border-radius: 50%; /* Make it circular */
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    margin: 2px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-weight: bold; /* Make the text bold */
+}
+
+.full-attendance {
+    background-color: green;
+    color: white;
+}
+
+.half-attendance {
+    background-color: orange;
+    color: white;
+}
+
+.low-attendance {
+    background-color: red;
+    color: white;
+}
+
+.no-attendance {
+    background-color: lightgray;
+    color: black;
+}
+
+.future-date {
+    background-color: gray;
+    color: white;
+}
+/* EmployeeManagement.css */
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #9dceff;
+}
+
+.table th, .table td {
+    vertical-align: left; /* Center align content */
+}
+
+.attendance-day {
+    border-radius: 50%; /* Make attendance indicators circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px; /* Adjust height */
+    width: 30px; /* Adjust width */
+}
+
+button {
+    margin-right: 5px; /* Add spacing between buttons */
+}

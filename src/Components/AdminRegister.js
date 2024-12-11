@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import './AdminRegister.css'; // Import the CSS file
 
 const AdminRegister = () => {
     const [formData, setFormData] = useState({

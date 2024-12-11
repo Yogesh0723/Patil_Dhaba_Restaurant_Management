@@ -1,0 +1,34 @@
+.container {
+    margin-top: 50px; /* Space from the top */
+}
+
+.card {
+    padding: 20px; /* Padding inside the card */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Space between form groups */
+}
+
+.message {
+    margin-top: 10px; /* Space above the message */
+    padding: 10px; /* Padding inside the message box */
+    border-radius: 5px; /* Rounded corners for the message box */
+}
+
+.message.success {
+    background-color: #d4edda; /* Light green background for success */
+    color: #155724; /* Dark green text */
+}
+
+.message.error {
+    background-color: #f8d7da; /* Light red background for error */
+    color: #721c24; /* Dark red text */
+}
+
+.btn {
+    margin-top: 20px; /* Space above the button */
+    width: 100%; /* Full width button */
+}
