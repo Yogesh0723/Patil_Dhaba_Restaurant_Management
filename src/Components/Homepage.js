@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInstagram, faFacebook, faLinkedin, faYoutube } from '@fortawesome/free-brands-svg-icons'; 
+import { faInstagram, faFacebook, faLinkedin, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { faDirections, faMapMarkerAlt   } from '@fortawesome/free-solid-svg-icons';// Import Font Awesome icons
 import unsplashImage from '../Images/unsplash.jpg';
 import LogoImage from '../Images/logo_no.PNG';
@@ -55,11 +55,11 @@ const Homepage = ({ handleRegisterClick, handleLoginClick }) => {
         const dishInterval = setInterval(() => {
             setCurrentDish(dishes[(dishes.indexOf(currentDish) + 1) % dishes.length]);
         }, 1000);
-        
+
 
         const imageInterval = setInterval(() => {
             setCurrentImageIndex((currentImageIndex + 1) % imageGallery.length);
-        }, 2000);
+        }, 1000);
 
         // Customer count increment every 2 minutes
         const countInterval = setInterval(() => {
