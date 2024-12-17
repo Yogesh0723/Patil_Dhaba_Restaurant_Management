@@ -353,21 +353,21 @@ const Dashboard = () => {
                                                 <tr key={index}>
                                                     <td>{item.quantity}</td>
                                                     <td>{item.menuItemName}</td>
-                                                    <td>${item.price}</td>
+                                                    <td>INR {item.price}</td>
                                                     <td>{new Date(item.orderTime).toLocaleString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </Table>
-                                    <p><Badge variant="secondary">Total Amount: ${tables.find(table => table.tableNumber === selectedTable).totalAmount}</Badge></p>
-                                    <p><Badge variant="success">Final Amount: ${tables.find(table => table.tableNumber === selectedTable).totalAmount - tables.find(table => table.tableNumber === selectedTable).discount}</Badge></p>
+                                    <p><Badge variant="secondary">Total Amount: INR {tables.find(table => table.tableNumber === selectedTable).totalAmount}</Badge></p>
+                                    <p><Badge variant="success">Final Amount: INR {tables.find(table => table.tableNumber === selectedTable).totalAmount - tables.find(table => table.tableNumber === selectedTable).discount}</Badge></p>
                                 </Card.Body>
                             </Card>
                         )}
 
                         <Card className="mb-4">
                             <Card.Body>
-                                <h2>Today's Profit: ${todayProfit}</h2>
+                                <h2>Today's Profit: INR {todayProfit}</h2>
                             </Card.Body>
                         </Card>
                     </Col>

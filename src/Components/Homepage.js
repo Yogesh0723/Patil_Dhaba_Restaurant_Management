@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faFacebook, faLinkedin, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { faDirections, faMapMarkerAlt   } from '@fortawesome/free-solid-svg-icons';// Import Font Awesome icons
+import { faDirections, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+
+// Import all existing images
 import unsplashImage from '../Images/unsplash.jpg';
 import LogoImage from '../Images/logo_no.PNG';
 import aboutImage from '../Images/about.jpg';
@@ -18,17 +23,11 @@ import Dish9 from '../Images/Dish9.jpg';
 import photo from '../Images/patilDhabaMain.jpg';
 
 const dishes = [
-    "Paneer Tikka",
-    "Biryani",
-    "Vada Pav",
-    "Pav Bhaji",
-    "Puran Poli",
-    "Misal Pav",
-    "Dhokla",
-    "Samosa",
-    "Bhaji",
-    "Kothimbir Vadi"
+    "Paneer Tikka", "Biryani", "Vada Pav", "Pav Bhaji", 
+    "Puran Poli", "Misal Pav", "Dhokla", "Samosa", 
+    "Bhaji", "Kothimbir Vadi"
 ];
+
 const imageGallery = [
     { src: Dish1, alt: 'Dish 1' },
     { src: Dish2, alt: 'Dish 2' },
@@ -42,29 +41,130 @@ const imageGallery = [
     { src: Dish6, alt: 'Dish 10' },
 ];
 
-const Homepage = ({ handleRegisterClick, handleLoginClick }) => {
+const Homepage = () => {
     const [currentDish, setCurrentDish] = useState(dishes[0]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [customerCount, setCustomerCount] = useState(10000);
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
+    
+    // Registration Modal States
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+    const [registrationData, setRegistrationData] = useState({
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: ''
+    });
+    const [registrationMessage, setRegistrationMessage] = useState({ type: '', content: '' });
+
+     // Login Modal States
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [loginData, setLoginData] = useState({
+        username: '',
+        password: ''
+    });
+    const [loginMessage, setLoginMessage] = useState({ type: '', content: '' });
+
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
+
+    // Registration Modal Methods
+    const openRegistrationModal = () => setIsRegistrationOpen(true);
+    const closeRegistrationModal = () => {
+        setIsRegistrationOpen(false);
+        setRegistrationMessage({ type: '', content: '' });
+    };
+
+    const handleRegistrationChange = (e) => {
+        setRegistrationData({ 
+            ...registrationData, 
+            [e.target.name]: e.target.value 
+        });
+    };
+
+    const handleRegistrationSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Basic Validation
+        if (registrationData.password !== registrationData.confirmPassword) {
+            setRegistrationMessage({ 
+                type: 'error', 
+                content: 'Passwords do not match' 
+            });
+            toast.error('Passwords do not match');
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8081/admin/register', registrationData);
+            setRegistrationMessage({ 
+                type: 'success', 
+                content: response.data 
+            });
+            toast.success(response.data);
+            closeRegistrationModal();
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || 'Error registering admin';
+            setRegistrationMessage({ 
+                type: 'error', 
+                content: errorMsg 
+            });
+            toast.error(errorMsg);
+        }
+    };
+    // Login Modal Methods
+        const openLoginModal = () => setIsLoginOpen(true);
+        const closeLoginModal = () => {
+            setIsLoginOpen(false);
+            setLoginMessage({ type: '', content: '' });
+        };
+
+        const handleLoginChange = (e) => {
+            setLoginData({
+                ...loginData,
+                [e.target.name]: e.target.value
+            });
+        };
+
+        const handleLoginSubmit = async (e) => {
+            e.preventDefault();
+
+            try {
+                const response = await axios.post('http://localhost:8081/admin/login', loginData);
+                setLoginMessage({
+                    type: 'success',
+                    content: response.data.message
+                });
+                toast.success(response.data.message);
+                closeLoginModal();
+                navigate('/dashboard'); // Navigate to dashboard after successful login
+            } catch (error) {
+                const errorMsg = error.response?.data?.message || 'Error logging in';
+                setLoginMessage({
+                    type: 'error',
+                    content: errorMsg
+                });
+                toast.error(errorMsg);
+            }
+        };
 
     useEffect(() => {
         const dishInterval = setInterval(() => {
             setCurrentDish(dishes[(dishes.indexOf(currentDish) + 1) % dishes.length]);
         }, 1000);
 
-
         const imageInterval = setInterval(() => {
             setCurrentImageIndex((currentImageIndex + 1) % imageGallery.length);
         }, 1000);
 
-        // Customer count increment every 2 minutes
         const countInterval = setInterval(() => {
             setCustomerCount(prevCount => prevCount + 1);
-        }, 120000); // 120000 ms = 2 minutes
+        }, 120000);
 
         return () => {
             clearInterval(dishInterval);
@@ -75,6 +175,300 @@ const Homepage = ({ handleRegisterClick, handleLoginClick }) => {
 
     return (
         <div className="App">
+            <ToastContainer />
+            
+            {/* Registration Modal */}
+      {isRegistrationOpen && (
+        <div className="modal-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div className="modal-content" style={{
+            backgroundColor: 'white',
+            padding: '30px',
+            borderRadius: '15px',
+            width: '650px',
+            // Remove fixed height for better responsiveness
+            // height: '650px', 
+            position: 'relative',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          }}>
+            <button
+              onClick={closeRegistrationModal}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: '#888'
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+            <h2 style={{ textAlign: 'left', marginBottom: '25px', color: '#333', fontWeight: 'bold'  }}>
+              Create your account
+            </h2>
+            <form onSubmit={handleRegistrationSubmit}>
+              <div className="form-fields">
+                
+              </div>
+              <div className="phone-username">
+                <input 
+                  type="text" 
+                  name="firstName" 
+                  placeholder="First Name"
+                  value={registrationData.firstName}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="text" 
+                  name="lastName" 
+                  placeholder="Last Name"
+                  value={registrationData.lastName}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="text" 
+                  name="phoneNumber" 
+                  placeholder="Phone Number"
+                  value={registrationData.phoneNumber}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="text" 
+                  name="username" 
+                  placeholder="Username"
+                  value={registrationData.username}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="email" 
+                  name="email" 
+                  placeholder="Email Address"
+                  value={registrationData.email}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="password" 
+                  name="password" 
+                  placeholder="Password"
+                  value={registrationData.password}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+                <input 
+                  type="password" 
+                  name="confirmPassword" 
+                  placeholder="Confirm Password"
+                  value={registrationData.confirmPassword}
+                  onChange={handleRegistrationChange} 
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ddd'
+                  }}
+                  required 
+                />
+              </div>
+              {registrationMessage.content && (
+                <div style={{
+                  marginTop: '15px',
+                  color: registrationMessage.type === 'error' ? 'red' : 'green',
+                  textAlign: 'center'
+                }}>
+                  {registrationMessage.content}
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                style={{
+                  width: '50%',
+                  padding: '12px',
+                  marginTop: '20px',
+                  backgroundColor: 'blanchedalmond',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}><span style={{
+                    background: 'linear-gradient(to right, blue, purple)',
+                    backgroundClip: 'text',
+                    webkitBackgroundClip: 'text',
+                    color: 'transparent',
+                  }}>Create</span>
+                  <span style={{
+                    background: 'linear-gradient(to right, purple, red)',
+                    backgroundClip: 'text',
+                    webkitBackgroundClip: 'text',
+                    color: 'transparent',
+                  }}> Account </span>
+              </button>
+            </form>
+                    </div>
+                </div>
+            )}
+            {/* Login Modal */}
+                        {isLoginOpen && (
+                            <div className="modal-overlay" style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                zIndex: 1000
+                            }}>
+                                <div className="modal-content" style={{
+                                    backgroundColor: 'white',
+                                    padding: '30px',
+                                    borderRadius: '15px',
+                                    width: '500px',
+                                    position: 'relative',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                }}>
+                                    <button
+                                        onClick={closeLoginModal}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '15px',
+                                            right: '15px',
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            color: '#888'
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faTimes} />
+                                    </button>
+                                    <h2 style={{ textAlign: 'left', marginBottom: '25px', color: '#333', fontWeight: 'bold' }}>
+                                        Login to your account
+                                    </h2>
+                                    <form onSubmit={handleLoginSubmit}>
+                                        <div className="login-fields">
+                                            <input
+                                                type="text"
+                                                name="username"
+                                                placeholder="Username"
+                                                value={loginData.username}
+                                                onChange={handleLoginChange}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px',
+                                                    marginBottom: '15px',
+                                                    borderRadius: '5px',
+                                                    border: '1px solid #ddd'
+                                                }}
+                                                required
+                                            />
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                placeholder="Password"
+                                                value={loginData.password}
+                                                onChange={handleLoginChange}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px',
+                                                    marginBottom: '15px',
+                                                    borderRadius: '5px',
+                                                    border: '1px solid #ddd'
+                                                }}
+                                                required
+                                            />
+                                        </div>
+                                        {loginMessage.content && (
+                                            <div style={{
+                                                marginTop: '15px',
+                                                color: loginMessage.type === 'error' ? 'red' : 'green',
+                                                textAlign: 'center'
+                                            }}>
+                                                {loginMessage.content}
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            style={{
+                                                width: '50%',
+                                                padding: '12px',
+                                                marginTop: '20px',
+                                                backgroundColor: 'blanchedalmond',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <span style={{
+                                                background: 'linear-gradient(to right, blue, purple)',
+                                                backgroundClip: 'text',
+                                                webkitBackgroundClip: 'text',
+                                                color: 'transparent',
+                                            }}>Login</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
             <header className="header">
                 <div className="logo">
                     <img alt="Patil Dhaba Logo" src={LogoImage} />
@@ -83,8 +477,8 @@ const Homepage = ({ handleRegisterClick, handleLoginClick }) => {
                     </span>
                 </div>
                 <div className="nav">
-                    <Link to="/register" className="nav-link" onClick={handleRegisterClick}>Register</Link>
-                    <Link to="/login" className="nav-link" onClick={handleLoginClick}>Login</Link>
+                    <Link to="" className="nav-link"onClick={openRegistrationModal}>Register</Link>
+                     <Link to="" className="nav-link" onClick={openLoginModal}>Login</Link>
                     <Link to="#about" className="nav-link">About</Link>
                     <a href="https://maps.app.goo.gl/1sFA4nPQHubDW7Xu9" target="_blank" rel="noopener noreferrer" className="nav-link">
                         <FontAwesomeIcon icon={faDirections} style={{ marginRight: '0px' }} />
